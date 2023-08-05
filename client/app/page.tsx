@@ -5,6 +5,7 @@ import axios, { AxiosError } from "axios";
 export default function Home() {
   const [urls, setUrls] = useState<string[]>([""]); //Storing the URLs in the array
   const [isValid, setIsValid] = useState<boolean[]>([true]); //Storing the validity of the URLs in the array
+  const [submitted, setSubmitted] = useState<boolean>(false); //Submitting the URLs to the backend and storing the response
 
   // Function to check if a URL is valid using regex from StackOverflow
   const isValidUrl = (url: string) => {
@@ -41,7 +42,15 @@ export default function Home() {
           { urls }
         );
         // Handle the response from the backend
-        console.log(response.data);
+        if (response.status === 200) {
+          setIsValid((_) => [true]); // Reset the isValid array
+          setUrls((_) => [""]); // Reset the urls array
+          setSubmitted(true); // Set the submitted state to true
+          alert("Download started successfully!"); // Show an alert
+          setTimeout(() => {
+            setSubmitted(false); // Reset the submitted state after 5 seconds
+          }, 5000);
+        }
       } catch (error) {
         const err = error as AxiosError; // Cast the error to AxiosError
         console.error("Error occurred during download:", err.message); // Log the error message
@@ -134,10 +143,11 @@ export default function Home() {
             <span className="hidden md:inline"> Another URL</span>
           </button>
           <button
+            disabled={submitted}
             onClick={submitUrls}
             className="w-1/2 bg-blue-600 ring-0 focus:outline-none text-gray-100 text-sm rounded-lg p-2.5 "
           >
-            SUBMIT
+            {submitted ? "Submitted" : "Submit"}
           </button>
         </div>
       </div>
