@@ -19,7 +19,7 @@ const multibar = new cliProgress.MultiBar(
     clearOnComplete: true,
     barsize: 50,
     hideCursor: true,
-    format: "{name} | {bar} | {value}/{total}%",
+    format: "{filename} | {bar} | {value}/{total}%",
   },
   cliProgress.Presets.rect
 );
@@ -42,14 +42,14 @@ const processDownloadQueue = () => {
     // Create a new progress bar instance for the worker thread with the threadId as the key
     if (!bars[worker.threadId]) {
       bars[worker.threadId] = multibar.create(100, 0, {
-        name: `Worker ${worker.threadId}`,
+        filename: `Worker ${worker.threadId}`,
       });
     }
 
     // Listen for messages from the worker thread
     worker.on("message", (message) => {
       bars[worker.threadId].start(100, 0, {
-        name: `Worker ${worker.threadId}`,
+        filename: `Worker ${worker.threadId}`,
       }); //Start the progress bar when the worker thread sends a message
 
       //If the message contains the progress property, update the progress bar
