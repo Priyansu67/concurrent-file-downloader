@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { URL } from "url";
 
 export default function Home() {
-  const [urls, setUrls] = useState<string[]>([""]);
-  const [isValid, setIsValid] = useState<boolean[]>([true]);
+  const [urls, setUrls] = useState<string[]>([""]); //Storing the URLs in the array
+  const [isValid, setIsValid] = useState<boolean[]>([true]); //Storing the validity of the URLs in the array
 
+  // Function to check if a URL is valid using regex from StackOverflow
   const isValidUrl = (url: string) => {
     const urlPattern =
       /^(http(s?):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/;
@@ -14,7 +14,7 @@ export default function Home() {
   };
 
   const submitUrls = async () => {
-    // Check and show which URL is invalid or empty
+    // Check and show which URL is invalid or empty by updating the isValid array
     urls.map((_, i) => {
       if (urls[i] === "" || !isValidUrl(urls[i])) {
         setIsValid((prev) => {
@@ -40,24 +40,27 @@ export default function Home() {
           "http://localhost:3005/api/download",
           { urls }
         );
-        // Handle the response containing the results
-        console.log("Download Results:", response.data);
+        // Handle the response from the backend
+        console.log(response.data);
       } catch (error) {
-        const err = error as AxiosError;
-        console.error("Error occurred during download:", err.message);
+        const err = error as AxiosError; // Cast the error to AxiosError
+        console.error("Error occurred during download:", err.message); // Log the error message
       }
     } else {
+      // If any URL is invalid or empty, show an error
       console.error(
         "Invalid URLs found, please correct them before submitting."
       );
     }
   };
 
+  // Function to add another URL input
   const addAnotherUrl = () => {
     setUrls((prev) => [...prev, ""]);
     setIsValid((prev) => [...prev, true]);
   };
 
+  // Function to handle the onBlur event of the URL input
   const handleInputBlur = (i: number) => {
     // Update the isValid state
     setIsValid((prev) => {
@@ -67,6 +70,7 @@ export default function Home() {
     });
   };
 
+  // Test links to download
   const testLinks = [
     "https://github.com/yourkin/fileupload-fastapi/raw/a85a697cab2f887780b3278059a0dd52847d80f3/tests/data/test-5mb.bin",
     "https://sabnzbd.org/tests/internetspeed/50MB.bin",
@@ -157,7 +161,7 @@ export default function Home() {
               <button
                 onClick={() => {
                   setUrls((prev) => {
-                    const newUrls = [...prev,link];
+                    const newUrls = [...prev, link];
                     return newUrls;
                   });
                   setIsValid((prev) => [...prev, true]);
